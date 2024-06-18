@@ -21,7 +21,8 @@ public class App {
     }
 
     private static String getDBUrl() {
-        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "");
+//        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
     }
 
 //    private static Integer getPort() {
@@ -43,7 +44,11 @@ public class App {
                     .lines().collect(Collectors.joining("\n"));
             try (var connection = dataSource.getConnection();
                  var statement = connection.createStatement()) {
-                statement.execute(sql);
+                try {
+                    statement.execute(sql);
+                } catch (SQLException e) {
+                    System.out.println("Looks like table already exists!");
+                }
             }
         } else {
             throw new SQLException("DB structure was not provided!");
@@ -63,6 +68,7 @@ public class App {
             } else {
                 throw new SQLException("Created_at not indicated!");
             }
+            ctx.redirect("/");
         });
 
         return app;
