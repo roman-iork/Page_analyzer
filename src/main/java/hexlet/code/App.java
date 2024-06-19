@@ -2,10 +2,14 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.model.Url;
 import hexlet.code.repository.BaseRepository;
 import hexlet.code.repository.UrlRepository;
 import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,6 +33,13 @@ public class App {
 //        var port = System.getenv().getOrDefault("PORT", "7070");
 //        return Integer.parseInt(port);
 //    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        return templateEngine;
+    }
 
     public static Javalin getApp() throws SQLException {
         var hikariConfig = new HikariConfig();
@@ -54,9 +65,13 @@ public class App {
             throw new SQLException("DB structure was not provided!");
         }
 
-        var app = Javalin.create(config -> config.bundledPlugins.enableDevLogging());
+        var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
+        });
 
-        app.get("/", ctx -> ctx.result(UrlRepository.getUrls().stream()
+        app.get("/", ctx -> ctx.render("main.jte"));
+        app.get("/list", ctx -> ctx.result(UrlRepository.getUrls().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining("\n"))));
         app.get("/create", ctx -> {
