@@ -5,16 +5,16 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
-import hexlet.code.model.Url;
+import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
-import hexlet.code.repository.UrlRepository;
+import hexlet.code.utils.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.stream.Collectors;
 
 public class App {
@@ -22,6 +22,15 @@ public class App {
     public static void main(String[] args) throws SQLException {
         var app = getApp();
         app.start(7070);
+//        var regex = "^http(:|s:)\\/\\/[\\w-]*\\.[a-z?%&=]*(:\\d*)*(\\/[\\w?%&=]*)*$";
+//        var text = "https://www.some-domain.org/example/path&";
+//        var regexPattern = Pattern.compile(regex);
+//        var matcher = regexPattern.matcher(text);
+//        if (matcher.find()) {
+//            System.out.println(text.substring(matcher.start(), matcher.end()));
+//        } else {
+//            System.out.println("No matches!");
+//        }
     }
 
     private static String getDBUrl() {
@@ -69,22 +78,12 @@ public class App {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
-
-        app.get("/", ctx -> ctx.render("main.jte"));
-        app.get("/list", ctx -> ctx.result(UrlRepository.getUrls().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining("\n"))));
-        app.get("/create", ctx -> {
-            var name = ctx.queryParam("name");
-            var createdAt = ctx.queryParam("created");
-            if (createdAt != null) {
-                var url = new Url(name, Timestamp.valueOf(createdAt));
-                UrlRepository.save(url);
-            } else {
-                throw new SQLException("Created_at not indicated!");
-            }
-            ctx.redirect("/");
-        });
+        //root route
+        app.get(NamedRoutes.rootPath(), RootController::root);
+        //url related routes
+        app.get(NamedRoutes.urlsPath(), UrlsController::urls);
+        app.post(NamedRoutes.urlsPath(), UrlsController::add);
+        app.get(NamedRoutes.urlPath("{id}"), UrlsController::url);
 
         return app;
     }

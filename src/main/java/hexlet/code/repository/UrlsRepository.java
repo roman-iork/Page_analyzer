@@ -6,8 +6,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class UrlRepository extends BaseRepository {
+public class UrlsRepository extends BaseRepository {
     public static List<Url> getUrls() throws SQLException {
         var sql = "SELECT * FROM urls";
         var urls = new ArrayList<Url>();
@@ -45,5 +46,37 @@ public class UrlRepository extends BaseRepository {
         } else {
             throw new SQLException("Such url id already exists!");
         }
+    }
+
+    public static boolean isUnique(String urlName) throws SQLException {
+        var sql = "SELECT COUNT(*) FROM urls WHERE name = ?";
+        var quantity = 0;
+        try (var connection = dataSource.getConnection();
+               var preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, urlName);
+            var resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                quantity = resultSet.getInt(1);
+            }
+        }
+        return quantity == 0;
+    }
+
+    public static Optional<Url> find(Long id) throws SQLException {
+
+        var sql = "SELECT * FROM urls WHERE id = ?";
+        try (var connection = dataSource.getConnection();
+                var preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
+            var resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                var urlName = resultSet.getString("name");
+                var createdAt = resultSet.getTimestamp("created_at");
+                var url = new Url(urlName, createdAt);
+                url.setId(id);
+                return Optional.of(url);
+            }
+        }
+        return Optional.empty();
     }
 }

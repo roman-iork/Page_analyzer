@@ -1,3 +1,4 @@
+@import hexlet.code.utils.NamedRoutes
 @import gg.jte.Content
 
 @param Content content
@@ -18,8 +19,8 @@
         <header class="bg-black text-white p-2 pt-3">
             <p>
                 <span class="px-3 fs-2">Page analyzer</span>
-                <a href="/" class="pe-3 text-white">Main page</a>
-                <a href="/list" class="text-white">Sites list</a>
+                <a href="${NamedRoutes.rootPath()}" class="pe-3 text-white">Main page</a>
+                <a href="${NamedRoutes.urlsPath()}" class="text-white">Sites list</a>
             </p>
         </header>
         <main>
