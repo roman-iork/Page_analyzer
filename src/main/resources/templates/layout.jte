@@ -15,7 +15,7 @@
               crossorigin="anonymous">
         <title>Page analyzer 📊</title>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header class="bg-black text-white p-2 pt-3">
             <p>
                 <span class="px-3 fs-2">Page analyzer</span>
@@ -23,18 +23,16 @@
                 <a href="${NamedRoutes.urlsPath()}" class="text-white">Sites list</a>
             </p>
         </header>
-        <main>
+        <main class="flex-grow-1">
             ${content}
         </main>
         <footer>
-            <div class="border-top position-fixed top-100 start-50 translate-middle pb-5 w-100 bg-light text-dark">
-                <p class="text-center pt-3">
-                    This site was created 📝 by
-                    <a href="https://github.com/roman-iork" class="text-black">Roman Iork</a>
-                    during studying 📖 at
-                    <a href="https://ru.hexlet.io" class="text-black">Hexlet</a>
-                </p>
-            </div>
+            <p class="footer border-top py-3 mt-5 bg-light text-center mb-0">
+                This site was created 📝 by
+                <a href="https://github.com/roman-iork" class="text-black">Roman Iork</a>
+                during studying 📖 at
+                <a href="https://ru.hexlet.io" class="text-black">Hexlet</a>
+            </p>
         </footer>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"

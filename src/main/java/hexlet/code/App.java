@@ -22,26 +22,22 @@ public class App {
     public static void main(String[] args) throws SQLException {
         var app = getApp();
         app.start(7070);
-//        var regex = "^http(:|s:)\\/\\/[\\w-]*\\.[a-z?%&=]*(:\\d*)*(\\/[\\w?%&=]*)*$";
-//        var text = "https://www.some-domain.org/example/path&";
-//        var regexPattern = Pattern.compile(regex);
-//        var matcher = regexPattern.matcher(text);
-//        if (matcher.find()) {
-//            System.out.println(text.substring(matcher.start(), matcher.end()));
-//        } else {
-//            System.out.println("No matches!");
-//        }
     }
 
-    private static String getDBUrl() {
-        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "");
-//        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+    private static String getDBUrl(boolean isTest) {
+        if (isTest) {
+            return "jdbc:h2:mem:project";
+        }
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project");
+//        "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;"
     }
-
-//    private static Integer getPort() {
-//        var port = System.getenv().getOrDefault("PORT", "7070");
-//        return Integer.parseInt(port);
-//    }
+    private static String getSchemaTemplate(boolean isTest) {
+        if (isTest) {
+            return "schemaH2.sql";
+        }
+        var isH2 = System.getenv().get("JDBC_DATABASE_URL") == null;
+        return isH2 ? "schemaH2.sql" : "schema.sql";
+    }
 
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
@@ -51,14 +47,18 @@ public class App {
     }
 
     public static Javalin getApp() throws SQLException {
+        return getApp(false);
+    }
+
+    public static Javalin getApp(boolean isTest) throws SQLException {
         var hikariConfig = new HikariConfig();
-        var dbUrl = getDBUrl();
+        var dbUrl = getDBUrl(isTest);
         hikariConfig.setJdbcUrl(dbUrl);
 
         var dataSource = new HikariDataSource(hikariConfig);
         BaseRepository.dataSource = dataSource;
 
-        var schema = App.class.getClassLoader().getResourceAsStream("schema.sql");
+        var schema = App.class.getClassLoader().getResourceAsStream(getSchemaTemplate(isTest));
         if (schema != null) {
             var sql = new BufferedReader(new InputStreamReader(schema))
                     .lines().collect(Collectors.joining("\n"));
