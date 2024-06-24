@@ -11,4 +11,5 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/95191bf51b152eb91bc6/test_coverage)](https://codeclimate.com/github/roman-iork/java-project-72/test_coverage)
 
 ### Render deployment link
+[![Page analyzer site](page-analyzer.png "Page Analyzer")](https://java-project-72-iqhn.onrender.com)
 To see [press here](https://java-project-72-iqhn.onrender.com)
