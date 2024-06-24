@@ -2,6 +2,7 @@
 [![Actions Status](https://github.com/roman-iork/java-project-72/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/roman-iork/java-project-72/actions)
 
 ### GitHug actions CI
+[![My-check](https://github.com/roman-iork/java-project-72/actions/workflows/my-check.yml/badge.svg)](https://github.com/roman-iork/java-project-72/actions/workflows/my-check.yml)
 
 ### CodeClimate maintenance
 [![Maintainability](https://api.codeclimate.com/v1/badges/95191bf51b152eb91bc6/maintainability)](https://codeclimate.com/github/roman-iork/java-project-72/maintainability)
