@@ -15,4 +15,10 @@ public class NamedRoutes {
     public static String urlPath(Long id) {
         return "/urls/" + id;
     }
+    public static String checkPath(Long id) {
+        return "/urls/" + id + "/check";
+    }
+    public static String checkPath(String id) {
+        return "/urls/" + id + "/check";
+    }
 }

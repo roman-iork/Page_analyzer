@@ -5,7 +5,7 @@
 @template.layout(
     content = @`
         @if(page.getFlash() != null)
-            <p class="alert ${page.getStatus()} mb-0" role="alert">
+            <p class="alert ${page.getFlashStatus()} mb-0" role="alert">
                 ${page.getFlash()}
                 <a href="${NamedRoutes.rootPath()}" class="position-absolute top-50 start-100 translate-middle pe-5">❌</a>
             </p>

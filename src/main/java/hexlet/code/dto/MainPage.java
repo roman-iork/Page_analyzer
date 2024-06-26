@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 public class MainPage {
     private String flash;
-    private String status;
+    private String flashStatus;
     private String canBeUrl;
 }

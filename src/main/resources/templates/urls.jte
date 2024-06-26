@@ -1,12 +1,13 @@
 @import hexlet.code.dto.UrlsPage
 @import hexlet.code.utils.NamedRoutes
+@import hexlet.code.repository.UrlCheckRepository
 
 @param UrlsPage page
 
 @template.layout(
     content = @`
         @if(page.getFlash() != null)
-            <p class="alert ${page.getStatus()}" role="alert">
+            <p class="alert ${page.getFlashStatus()}" role="alert">
                 ${page.getFlash()}
                 <a href="${NamedRoutes.urlsPath()}" class="position-absolute top-50 start-100 translate-middle pe-5">❌</a>
             </p>
@@ -28,8 +29,18 @@
                             <tr>
                                 <th scope="row">${url.getId()}</th>
                                 <td><a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a></td>
-                                <td>${url.getId()}</td>
-                                <td>${url.getId()}</td>
+                                @if(UrlCheckRepository.findLast(url.getId()).isPresent())
+                                    <td>
+                                        ${UrlCheckRepository.findLast(url.getId()).get()
+                                            .getCreatedAt().toLocalDateTime().toLocalDate().toString()}
+                                        ${UrlCheckRepository.findLast(url.getId()).get()
+                                            .getCreatedAt().toLocalDateTime().toLocalTime().withNano(0).toString()}
+                                    </td>
+                                    <td>${UrlCheckRepository.findLast(url.getId()).get().getStatusCode()}</td>
+                                @else
+                                    <td></td>
+                                    <td></td>
+                                @endif
                             </tr>
                         @endfor
                     </tbody>

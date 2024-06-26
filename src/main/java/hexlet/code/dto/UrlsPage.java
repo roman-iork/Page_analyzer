@@ -1,6 +1,7 @@
 package hexlet.code.dto;
 
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import io.javalin.validation.ValidationError;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,6 @@ import java.util.Map;
 @Setter
 public class UrlsPage {
     private String flash;
-    private String status;
+    private String flashStatus;
     private List<Url> urls;
 }
