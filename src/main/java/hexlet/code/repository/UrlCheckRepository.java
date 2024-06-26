@@ -64,7 +64,7 @@ public class UrlCheckRepository extends BaseRepository {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("For some reason can't find last check of url");
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
