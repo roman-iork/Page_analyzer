@@ -12,7 +12,9 @@ public class UrlCheckRepository extends BaseRepository {
     //save
     public static void save(UrlCheck urlCheck) throws SQLException {
         if (urlCheck.getId() == null) {
-            var sql = "INSERT INTO url_checks (status_code, title, h1, description, created_at, url_id) VALUES (?, ?, ?, ?, ?, ?)";
+            var sql = "INSERT INTO url_checks "
+                    + "(status_code, title, h1, description, created_at, url_id) "
+                    + "VALUES (?, ?, ?, ?, ?, ?)";
             try (var connection = dataSource.getConnection();
                  var preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setInt(1, urlCheck.getStatusCode());

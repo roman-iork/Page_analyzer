@@ -3,6 +3,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
     id "io.freefair.lombok" version "8.6"
     id 'jacoco'
+    id 'checkstyle'
 }
 
 application {
@@ -28,6 +29,7 @@ dependencies {
     implementation 'com.konghq:unirest-java-bom:4.4.0'
     implementation 'com.konghq:unirest-java-core:4.4.0'
     implementation 'com.konghq:unirest-modules-jackson:4.4.0'
+    implementation 'org.jsoup:jsoup:1.17.2'
     //test
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'

@@ -8,13 +8,11 @@ import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlsRepository;
 import hexlet.code.utils.NamedRoutes;
-import hexlet.code.utils.Utils;
 import io.javalin.http.Context;
 import kong.unirest.core.Unirest;
 import kong.unirest.core.UnirestException;
-
+import org.jsoup.Jsoup;
 import static io.javalin.rendering.template.TemplateUtil.model;
-
 import java.net.URI;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -56,7 +54,9 @@ public class UrlsController {
     public static void url(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         try {
-            var url = UrlsRepository.find(id).orElseThrow(() -> new SQLException("No such URL in the list! \uD83E\uDD26"));
+            var url = UrlsRepository.find(id).orElseThrow(() -> {
+                return new SQLException("No such URL in the list! \uD83E\uDD26");
+            });
             var urlChecks = UrlCheckRepository.getChecks(id);
             var page = new UrlPage(url,
                     urlChecks,
@@ -77,15 +77,20 @@ public class UrlsController {
                 .getName();
         try {
             var response = Unirest.get(urlName).asString().getBody();
+            var doc = Jsoup.parse(response);
+            var title = doc.select("title").first() == null ? "" : doc.select("title").first().text();
+            var h1 = doc.select("h1").first() == null ? "" : doc.select("h1").first().text();
+            var metaDescription = doc.select("meta[name='description'][content~=.*]").first();
+            var description = metaDescription == null ? "" : metaDescription.attr("content");
             //create urlCheck instance and fill it with data
             var urlCheck = new UrlCheck();
-            urlCheck.setStatusCode(Unirest.get(urlName).asJson().getStatus());
-            urlCheck.setTitle(Utils.getTitle(response));
-            urlCheck.setH1(Utils.getH1(response));
-            urlCheck.setDescription(Utils.getDescription(response));
+            urlCheck.setStatusCode(Unirest.get(urlName).asString().getStatus());
+            urlCheck.setTitle(title);
+            urlCheck.setH1(h1);
+            urlCheck.setDescription(description);
             urlCheck.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             urlCheck.setUrlId(urlId);
-            //save urlCheck instance to DB adn redirect
+            //save urlCheck instance to DB and redirect
             UrlCheckRepository.save(urlCheck);
             ctx.sessionAttribute("flash", "Check was successfully added! ✅");
             ctx.sessionAttribute("flashStatus", "alert-success");

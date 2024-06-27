@@ -17,7 +17,7 @@
                 <input class="form-control-lg w-75" type="text" name="url" placeholder="Enter site address as in example below 👇" value="${page.getCanBeUrl()}">
                 <input class="form-control-lg bg-black text-white" type="submit" value="Check">
             </form>
-            <p class="fs-5">Example: https://mail.ru</p>
+            <p class="fs-5">Example: https://domain.smth</p>
         </div>
     `
 )

@@ -26,13 +26,13 @@ public class AppTest {
     @BeforeAll
     public static void setUpServers() throws IOException {
         server.enqueue(new MockResponse()
-                .setBody("Some text" +
-                "<title>Check title</title>" +
-                "Some text" +
-                "\"description\" content=\"Check description\"/" +
-                "Some text" +
-                "<h1>Check h1</h1>" +
-                "Some text"
+                .setBody("Some text"
+                + "<title>Check title</title>"
+                + "Some text"
+                + "<meta name=\"description\" content=\"Check description\"/>"
+                + "Some text\n"
+                + "<h1>Check h1</h1>\n"
+                + "Some text"
         ));
         server.enqueue(new MockResponse()
                 .setBody("{\"Status\": 200}"));
@@ -46,12 +46,12 @@ public class AppTest {
 
     @BeforeEach
     public void startApp() throws SQLException {
-    app = getApp(true);
+        app = getApp(true);
     }
 
     @Test
     public void testRoot() {
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             var response = client.get("/");
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("Page analyzer",
@@ -68,7 +68,7 @@ public class AppTest {
         UrlsRepository.save(url1);
         UrlsRepository.save(url2);
         UrlsRepository.save(url3);
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             var response = client.get("/urls");
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("http://url1.io", "http://url2.io", "http://url3.io");
@@ -79,7 +79,7 @@ public class AppTest {
     public void testUrl() throws SQLException {
         var url = new Url("http://url.io", Timestamp.valueOf("2024-06-23 11:00:00"));
         UrlsRepository.save(url);
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             var response = client.get("/urls/1");
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("http://url.io", "2024-06-23", "11:00", "Check chronology");
@@ -90,7 +90,7 @@ public class AppTest {
     public void testPostUrl() throws SQLException {
         var requestBody = "url=http://url.io";
         var id = "1";
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains(id, "http://url.io");
@@ -102,7 +102,7 @@ public class AppTest {
     @Test
     public void testPostUrlDuplicate() {
         var requestBody = "url=http://url.io";
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             client.post("/urls", requestBody);
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
@@ -113,7 +113,7 @@ public class AppTest {
     @Test
     public void testPostUrlWrong() {
         var requestBody = "url=hhhh://url.io";
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("Wrong URL!");
@@ -124,7 +124,7 @@ public class AppTest {
     public void testUrlNotExisting() throws SQLException {
         var url = new Url("http://url.io", Timestamp.valueOf("2024-06-23 11:00:00"));
         UrlsRepository.save(url);
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             var response = client.get("/urls/2");
             assertThat(response.code()).isEqualTo(404);
         });
@@ -133,7 +133,7 @@ public class AppTest {
     @Test
     public void testUrlExtracting() {
         var requestBody = "url=http://url.io/5/check";
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             client.post("/urls", requestBody);
             var response = client.get("/urls/1");
             assertThat(response.code()).isEqualTo(200);
@@ -145,7 +145,7 @@ public class AppTest {
     public void testUrlCheck() {
         var baseUrl = server.url("/").toString();
         var requestBody = "url=" + baseUrl;
-        test(app, (server, client) -> {
+        test(app, (srv, client) -> {
             client.post("/urls", requestBody);
             var response = client.post("/urls/1/check");
             assertThat(response.code()).isEqualTo(200);
