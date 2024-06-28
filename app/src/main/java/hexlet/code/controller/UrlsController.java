@@ -70,9 +70,12 @@ public class UrlsController {
 
     public static void check(Context ctx) throws SQLException {
         var urlId = ctx.pathParamAsClass("id", Long.class).get();
-        var urlName = UrlsRepository.find(urlId)
-                .orElseThrow(() -> new SQLException("No such URL id!"))
-                .getName();
+        var mayBeUrl = UrlsRepository.find(urlId);
+        if (mayBeUrl.isEmpty()) {
+            ctx.status(404).result("Url with id = " + urlId + " not found");
+            return;
+        }
+        var urlName = mayBeUrl.get().getName();
         try {
             var response = Unirest.get(urlName).asString().getBody();
             var doc = Jsoup.parse(response);
