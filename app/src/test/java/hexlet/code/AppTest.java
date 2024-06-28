@@ -132,12 +132,12 @@ public class AppTest {
 
     @Test
     public void testUrlExtracting() {
-        var requestBody = "url=http://url.io/5/check";
+        var requestBody = "url=http://url.io/5/checks";
         test(app, (srv, client) -> {
             client.post("/urls", requestBody);
             var response = client.get("/urls/1");
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string()).doesNotContain("/5/check");
+            assertThat(response.body().string()).doesNotContain("/5/checks");
         });
     }
 
@@ -147,7 +147,7 @@ public class AppTest {
         var requestBody = "url=" + baseUrl;
         test(app, (srv, client) -> {
             client.post("/urls", requestBody);
-            var response = client.post("/urls/1/check");
+            var response = client.post("/urls/1/checks");
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("Check title", "Check description", "Check h1");
         });
