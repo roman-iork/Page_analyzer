@@ -23,7 +23,7 @@ jobs:
       uses: paambaati/codeclimate-action@v5.0.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CDCL_TEST_REPORTER_ID_72}}
-        JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+        JACOCO_SOURCE_PATH: "${{github.workspace}}/app/src/main/java"
       with:
         workingDirectory: ./app
         coverageCommand: ./gradlew jacocoTestReport

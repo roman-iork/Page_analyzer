@@ -51,7 +51,7 @@ public class UrlsController {
         }
     }
 
-    public static void url(Context ctx) throws SQLException {
+    public static void url(Context ctx) {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         try {
             var url = UrlsRepository.find(id).orElseThrow(() -> {
@@ -64,9 +64,7 @@ public class UrlsController {
                     ctx.consumeSessionAttribute("flashStatus"));
             ctx.render("url.jte", model("page", page));
         } catch (SQLException e) {
-            var urls = UrlsRepository.getUrls();
-            var page = new UrlsPage(e.getMessage(), "alert-warning", urls);
-            ctx.render("urls.jte", model("page", page)).status(404);
+            ctx.status(404).result("Url with id = " + id + " not found");
         }
     }
 
