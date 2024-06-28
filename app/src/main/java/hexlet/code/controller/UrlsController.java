@@ -79,13 +79,14 @@ public class UrlsController {
         try {
             var response = Unirest.get(urlName).asString().getBody();
             var doc = Jsoup.parse(response);
+            var status = ctx.status().getCode();
             var title = doc.select("title").first() == null ? "" : doc.select("title").first().text();
             var h1 = doc.select("h1").first() == null ? "" : doc.select("h1").first().text();
             var metaDescription = doc.select("meta[name='description'][content~=.*]").first();
             var description = metaDescription == null ? "" : metaDescription.attr("content");
             //create urlCheck instance and fill it with data
             var urlCheck = new UrlCheck();
-            urlCheck.setStatusCode(Unirest.get(urlName).asString().getStatus());
+            urlCheck.setStatusCode(status);
             urlCheck.setTitle(title);
             urlCheck.setH1(h1);
             urlCheck.setDescription(description);

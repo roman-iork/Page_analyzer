@@ -34,8 +34,6 @@ public class AppTest {
                 + "<h1>Check h1</h1>\n"
                 + "Some text"
         ));
-        server.enqueue(new MockResponse()
-                .setBody("{\"Status\": 200}"));
         server.start();
     }
 
