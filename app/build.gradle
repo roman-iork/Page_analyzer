@@ -1,5 +1,5 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
+//import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+//import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'application'
@@ -42,13 +42,13 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    testLogging {
-        exceptionFormat = TestExceptionFormat.FULL
-        events = Set.of(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED) //is it right with Set.of?
-        // showStackTraces = true
-        showCauses = true
-        showStandardStreams = true
-    }
+//    testLogging {
+//        exceptionFormat = TestExceptionFormat.FULL
+//        events = Set.of(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED) //is it right with Set.of?
+//        // showStackTraces = true
+//        showCauses = true
+//        showStandardStreams = true
+//    }
 }
 
 tasks.jacocoTestReport { reports { xml.required.set(true) } }

@@ -16,10 +16,10 @@ public class Utils {
 
     public static String getSchemaTemplate(boolean isTest) {
         if (isTest) {
-            return "schemaH2.sql";
+            return "schema.sql";
         }
         var isH2 = System.getenv().get("JDBC_DATABASE_URL") == null;
-        return isH2 ? "schemaH2.sql" : "schema.sql";
+        return isH2 ? "schema.sql" : "schemaPostgr.sql";
     }
 
     public static TemplateEngine createTemplateEngine() {
