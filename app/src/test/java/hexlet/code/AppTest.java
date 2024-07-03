@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.model.Url;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlsRepository;
 import io.javalin.Javalin;
 import static io.javalin.testtools.JavalinTest.test;
@@ -95,10 +96,11 @@ public final class AppTest {
         });
         var url = UrlsRepository.find(1L).orElseThrow();
         assertThat(url.getName()).isEqualTo("http://url.io");
+        assertThat(UrlsRepository.getUrls().size()).isEqualTo(1);
     }
 
     @Test
-    public void testPostUrlDuplicate() {
+    public void testPostUrlDuplicate() throws SQLException {
         var requestBody = "url=http://url.io";
         test(app, (srv, client) -> {
             client.post("/urls", requestBody);
@@ -106,16 +108,18 @@ public final class AppTest {
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("This URL already was added!");
         });
+        assertThat(UrlsRepository.getUrls().size()).isEqualTo(1);
     }
 
     @Test
-    public void testPostUrlWrong() {
+    public void testPostUrlWrong() throws SQLException {
         var requestBody = "url=hhhh://url.io";
         test(app, (srv, client) -> {
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("Wrong URL!");
         });
+        assertThat(UrlsRepository.getUrls().size()).isEqualTo(0);
     }
 
     @Test
@@ -129,7 +133,7 @@ public final class AppTest {
     }
 
     @Test
-    public void testUrlExtracting() {
+    public void testUrlExtracting() throws SQLException {
         var requestBody = "url=http://url.io/5/checks";
         test(app, (srv, client) -> {
             client.post("/urls", requestBody);
@@ -137,6 +141,7 @@ public final class AppTest {
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).doesNotContain("/5/checks");
         });
+        assertThat(UrlsRepository.getUrls().size()).isEqualTo(1);
     }
 
     @Test
@@ -145,9 +150,12 @@ public final class AppTest {
         var requestBody = "url=" + baseUrl;
         test(app, (srv, client) -> {
             client.post("/urls", requestBody);
+            assertThat(UrlCheckRepository.getChecks(1L).size()).isEqualTo(0);
             var response = client.post("/urls/1/checks");
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("Check title", "Check description", "Check h1");
+            assertThat(UrlCheckRepository.getChecks(1L).size()).isEqualTo(1);
         });
+
     }
 }
